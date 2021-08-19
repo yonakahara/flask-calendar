@@ -1,0 +1,87 @@
+{% extends 'base.html' %} 
+
+{% block head %}
+
+<!-- install full calendar -->
+<link href="{{ url_for('static', filename='fullcalendar/main.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='fullcalendar/main.js') }}"></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    window.calendar = new FullCalendar.Calendar(calendarEl, { // make global
+      initialView: 'timeGridFourDay', 
+      headerToolbar: {
+        center: 'timeGridDay,timeGridFourDay' // buttons for switching between views
+      },
+      views: {
+        timeGridFourDay: {
+          type: 'timeGrid',
+          duration: { days: 4 },
+          buttonText: '4 day'
+        }
+      }, 
+      events: [
+        { // this object will be "parsed" into an Event Object
+          title: 'The Title', // a property!
+          start: '2021-08-19T17:00:00', // a property!
+          end: '2021-08-19T19:00:00',  // a property! ** see important note below about 'end' **
+          color: "red"
+        }
+      ], 
+      editable: true
+      // eventResizableFromStart: true; 
+    });
+    window.calendar.render();
+  });
+
+  // add Ajax
+  $(document).ready(function() {
+    // ①formのsubmitボタンをクリック
+    $('#form').on('submit',function(event){
+　　　　　// ②Ajax通信
+      $.ajax({
+        data : {
+　　　　　　　// ③form内inputの値、リクエスト(POST or GET),リクエスト先のURLを記述
+          date_start : $('#date-start').val(),
+          date_end : $('#date-end').val(),
+          event_title : $('#event-title').val(),
+        },
+        type : 'POST',
+        url : '/cal/'
+      })
+　　　　　// ④formの下に結果を表示
+      .done(function(data){
+        // $('#output').text(data.output).show();
+        // event追加してみる
+        window.calendar.addEvent(data); 
+        console.log(data);
+      });
+      event.preventDefault();
+    });
+  });
+
+</script>
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h3>This is Calendar Page</h3>
+
+    <!-- try add event using Ajax via form -->
+    <form id="form">
+      <input type="text" placeholder="date start" id="date-start">
+      <input type="text" placeholder="date end" id="date-end">
+      <input type="text" placeholder="event title" id="event-title">
+      <button type="submit" name="button">Add Event</button>
+    </form>
+    <div id="output"></div>
+
+    <!-- render calendar -->
+    <div id="calendar"></div>
+
+
+
+{% endblock %}
