@@ -1,20 +1,22 @@
-# activate venv environment
+# A Flask-based Calendar for Laboratory Use
+
+## activate venv environment
 ```
 . venv/bin/activate
 ```
 
-# setup
+## setup
 ```
 export FLASK_ENV=development
 export FLASK_APP=flaskr
 ```
 
-# install packages
+## install packages
 ```
 pip install flask
 ```
 
-# project layout
+## project layout
 ```
 /home/user/Projects/flask-tutorial
 ├── flaskr/
