@@ -7,6 +7,9 @@
 <script src="{{ url_for('static', filename='fullcalendar/main.js') }}"></script>
 <script>
 
+  // pythonからevents(json)をつけとる
+  let events_stored = {{ events | tojson }}; 
+  
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     window.calendar = new FullCalendar.Calendar(calendarEl, { // make global
@@ -21,14 +24,7 @@
           buttonText: '4 day'
         }
       }, 
-      events: [
-        { // this object will be "parsed" into an Event Object
-          title: 'The Title', // a property!
-          start: '2021-08-19T17:00:00', // a property!
-          end: '2021-08-19T19:00:00',  // a property! ** see important note below about 'end' **
-          color: "red"
-        }
-      ], 
+      events: events_stored,
       editable: true
       // eventResizableFromStart: true; 
     });
