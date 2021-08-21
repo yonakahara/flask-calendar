@@ -16,7 +16,7 @@ bp = Blueprint('calendar', __name__, url_prefix='/cal')
 def show_cal():
     db = get_db()
     if request.method == "POST": 
-        current_app.logger.debug(request.form)
+        # current_app.logger.debug(request.form)
         date_start = request.form['date_start']
         date_end = request.form['date_end']
         event_title = request.form['event_title']
@@ -32,7 +32,8 @@ def show_cal():
         return jsonify({'error' : 'Missing data!'})
     
     # GET: take out events and pass to calendar object
-    events_rows = db.execute("SELECT * FROM event WHERE user_id = 1").fetchall()
+    # current_app.logger.debug(session["user_id"])
+    events_rows = db.execute("SELECT * FROM event WHERE user_id = ?", (session["user_id"],)).fetchall()
     events_list = []
     for row in events_rows: 
         d = collections.OrderedDict()
@@ -41,4 +42,18 @@ def show_cal():
         d["title"] = row["title"]
         # d["user_id"] = int(row["user_id"])
         events_list.append(d)
+    # current_app.logger.debug(events_list)
     return render_template("calendar/cal.html", events = events_list)
+
+# update event
+@bp.route("/update", methods=("GET", "POST"))
+def update_event(): 
+    current_app.logger.debug(request.form)
+    r = request.form
+    # update event object
+    db = get_db()
+    db.execute("UPDATE event SET (start, end, title) = (?, ?, ?) WHERE user_id = ? AND start like ? AND end like ? AND title = ?", 
+               (r["event[start]"], r["event[end]"], r["event[title]"], session["user_id"], 
+                r["event_old[start]"], r["event_old[end]"], r["event_old[title]"]))
+    db.commit()
+    return redirect(url_for("calendar.show_cal"))

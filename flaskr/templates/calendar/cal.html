@@ -7,12 +7,13 @@
 <script src="{{ url_for('static', filename='fullcalendar/main.js') }}"></script>
 <script>
 
-  // pythonからevents(json)をつけとる
+  // pythonからevents(json)をうけとる
   let events_stored = {{ events | tojson }}; 
   
   document.addEventListener('DOMContentLoaded', function() {
+
     var calendarEl = document.getElementById('calendar');
-    window.calendar = new FullCalendar.Calendar(calendarEl, { // make global
+    var calendar = new FullCalendar.Calendar(calendarEl, { // make global
       initialView: 'timeGridFourDay', 
       headerToolbar: {
         center: 'timeGridDay,timeGridFourDay' // buttons for switching between views
@@ -26,16 +27,14 @@
       }, 
       events: events_stored,
       editable: true
-      // eventResizableFromStart: true; 
     });
-    window.calendar.render();
-  });
 
-  // add Ajax
-  $(document).ready(function() {
-    // ①formのsubmitボタンをクリック
+    // render calendar 
+    calendar.render();
+
+    // ajax
     $('#form').on('submit',function(event){
-　　　　　// ②Ajax通信
+  　　 // ②Ajax通信
       $.ajax({
         data : {
 　　　　　　　// ③form内inputの値、リクエスト(POST or GET),リクエスト先のURLを記述
@@ -46,16 +45,41 @@
         type : 'POST',
         url : '/cal/'
       })
-　　　　　// ④formの下に結果を表示
+　　  // ④formの下に結果を表示
       .done(function(data){
         // $('#output').text(data.output).show();
         // event追加してみる
-        window.calendar.addEvent(data); 
+        calendar.addEvent(data); 
         console.log(data);
       });
       event.preventDefault();
     });
+    
+    // update event changes
+    calendar.on('eventChange', function(changeInfo){
+      $.ajax({
+        data: {
+          event: {
+            start : changeInfo.event.start.toISOString(), 
+            end : changeInfo.event.end.toISOString(),
+            title : changeInfo.event.title,
+          }, 
+          event_old: {
+            start : changeInfo.oldEvent.start.toISOString(), 
+            end : changeInfo.oldEvent.end.toISOString(),
+            title : changeInfo.oldEvent.title,
+          }
+        }, 
+        type : 'POST', 
+        url : '/cal/update' 
+      }); 
+      console.log(changeInfo.event.start); 
+    });
+
   });
+
+
+
 
 </script>
 
