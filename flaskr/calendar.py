@@ -9,14 +9,16 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
+from flaskr.auth import login_required
 
 bp = Blueprint('calendar', __name__, url_prefix='/cal')
 
 @bp.route("/", methods=("GET", "POST"))
+@login_required
 def show_cal():
     db = get_db()
     if request.method == "POST": 
-        # current_app.logger.debug(request.form)
+        current_app.logger.debug(request.form)
         date_start = request.form['date_start']
         date_end = request.form['date_end']
         event_title = request.form['event_title']
@@ -46,14 +48,13 @@ def show_cal():
     return render_template("calendar/cal.html", events = events_list)
 
 # update event
-@bp.route("/update", methods=("GET", "POST"))
+@bp.route("/update", methods=("GET", "POST")) # methods=を消すとなぜかバグる(403)
 def update_event(): 
-    current_app.logger.debug(request.form)
     r = request.form
     # update event object
     db = get_db()
-    db.execute("UPDATE event SET (start, end, title) = (?, ?, ?) WHERE user_id = ? AND start like ? AND end like ? AND title = ?", 
+    db.execute("UPDATE event SET (start, end, title) = (?, ?, ?) WHERE user_id = ? AND start like ? AND title = ?", 
                (r["event[start]"], r["event[end]"], r["event[title]"], session["user_id"], 
-                r["event_old[start]"], r["event_old[end]"], r["event_old[title]"]))
+                r["event_old[start]"], r["event_old[title]"]))
     db.commit()
     return redirect(url_for("calendar.show_cal"))

@@ -12,8 +12,12 @@
   
   document.addEventListener('DOMContentLoaded', function() {
 
+    var Calendar = FullCalendar.Calendar;
+    var Draggable = FullCalendar.Draggable;
+
     var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, { // make global
+    var containerEl = document.getElementById('external-events');
+    var calendar = new Calendar(calendarEl, { // make global
       initialView: 'timeGridFourDay', 
       headerToolbar: {
         center: 'timeGridDay,timeGridFourDay' // buttons for switching between views
@@ -22,41 +26,53 @@
         timeGridFourDay: {
           type: 'timeGrid',
           duration: { days: 4 },
-          buttonText: '4 day'
+          buttonText: '4 day' 
         }
       }, 
       events: events_stored,
-      editable: true
+      editable: true, 
+      droppable: true
     });
 
     // render calendar 
     calendar.render();
 
-    // ajax
-    $('#form').on('submit',function(event){
-  　　 // ②Ajax通信
+    // create draggable
+    new Draggable(containerEl, {
+      itemSelector: '.fc-event',
+      eventData: function(eventEl) {
+        return {
+          title: eventEl.innerText
+        };
+      }
+    });
+
+    // create event with external draggable element
+    calendar.on('eventReceive', function(info){
+      // note that = does not mean copy but reference in javascript 
+      var start = info.event.start;
+      var end = new Date(+start);
+      end.setHours(start.getHours()+1); 
+      console.log(start); 
+      console.log(end); 
       $.ajax({
         data : {
-　　　　　　　// ③form内inputの値、リクエスト(POST or GET),リクエスト先のURLを記述
-          date_start : $('#date-start').val(),
-          date_end : $('#date-end').val(),
-          event_title : $('#event-title').val(),
+          date_start : start.toISOString(),
+          date_end : end.toISOString(),
+          event_title : info.event.title
         },
         type : 'POST',
         url : '/cal/'
       })
-　　  // ④formの下に結果を表示
       .done(function(data){
-        // $('#output').text(data.output).show();
-        // event追加してみる
-        calendar.addEvent(data); 
+        // calendar.addEvent(data); 
         console.log(data);
       });
-      event.preventDefault();
     });
-    
+
     // update event changes
     calendar.on('eventChange', function(changeInfo){
+      console.log(changeInfo.event.end);
       $.ajax({
         data: {
           event: {
@@ -66,7 +82,7 @@
           }, 
           event_old: {
             start : changeInfo.oldEvent.start.toISOString(), 
-            end : changeInfo.oldEvent.end.toISOString(),
+            // end : changeInfo.oldEvent.end.toISOString(),
             title : changeInfo.oldEvent.title,
           }
         }, 
@@ -76,9 +92,12 @@
       console.log(changeInfo.event.start); 
     });
 
+    // delete event when dropped outside current calendar 
+    calendar.on('eventLeave', function(info){
+      info.event.remove(); 
+    });
+
   });
-
-
 
 
 </script>
@@ -90,17 +109,32 @@
 
     <h3>This is Calendar Page</h3>
 
-    <!-- try add event using Ajax via form -->
-    <form id="form">
-      <input type="text" placeholder="date start" id="date-start">
-      <input type="text" placeholder="date end" id="date-end">
-      <input type="text" placeholder="event title" id="event-title">
-      <button type="submit" name="button">Add Event</button>
-    </form>
-    <div id="output"></div>
+    <!-- draggable elements -->
+    <div id="external-events">
+      <p>
+        <strong>Draggable Events</strong>
+      </p>
+      <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+        <div class="fc-event-main">Equiptment 1</div>
+      </div>
+      <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+        <div class="fc-event-main">Equiptment 2</div>
+      </div>
+      <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+        <div class="fc-event-main">Equiptment 3</div>
+      </div>
+      <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+        <div class="fc-event-main">Equiptment 4</div>
+      </div>
+      <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
+        <div class="fc-event-main">Equiptment 5</div>
+      </div>
+    </div>
 
     <!-- render calendar -->
-    <div id="calendar"></div>
+    <div id="calendar-container">
+      <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard"></div>
+    </div>
 
 
 
