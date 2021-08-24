@@ -1,49 +1,60 @@
-# A Flask-based Calendar for Laboratory Use
+# Lab Reserve - A Flask-based Scheduler for Laboratory Researchers
 
-## activate venv environment
+
+## Why Lab Reserve? 
+
+I am in a small biomedical research lab with many experimental equiptment that we have to share with each other. Currently we are using a web-based scheduler but its UI/UX is really frustrating. So I made a reservation scheduler with modern UI that will enable you to reserve anything equiptment you want to use within 5s! 
+
+
+## What is Lab Reserve? 
+
+See our demo video! 
+https://youtu.be/iKAdm-ZGjIc
+
+The calendar is enabled by FullCalendar Library. 
+
+
+## Setting up this application in your environment
+
+### activate venv environment
 ```
 . venv/bin/activate
 ```
 
-## setup
+### setup
 ```
 export FLASK_ENV=development
 export FLASK_APP=flaskr
 ```
 
-## install packages
+### install packages
 ```
 pip install flask
 ```
 
 ## project layout
 ```
-/home/user/Projects/flask-tutorial
+/flask-calendar
 ├── flaskr/
 │   ├── __init__.py
 │   ├── db.py
 │   ├── schema.sql
 │   ├── auth.py
-│   ├── blog.py
+│   ├── calendar.py
 │   ├── templates/
 │   │   ├── base.html
 │   │   ├── auth/
 │   │   │   ├── login.html
 │   │   │   └── register.html
-│   │   └── blog/
-│   │       ├── create.html
-│   │       ├── index.html
-│   │       └── update.html
+│   │   └── calendar/
+│   │       └── cal.html
 │   └── static/
-│       └── style.css
-├── tests/
-│   ├── conftest.py
-│   ├── data.sql
-│   ├── test_factory.py
-│   ├── test_db.py
-│   ├── test_auth.py
-│   └── test_blog.py
+│       ├── style.css
+|       └── fullcalendar/ 
+|           ├── main.css
+|           └── main.js
 ├── venv/
-├── setup.py
-└── MANIFEST.in
+├── .gitignore
+├── package-lock.json
+└── README.md
 ```
