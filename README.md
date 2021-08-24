@@ -11,13 +11,22 @@ I am in a small biomedical research lab with many experimental equiptment that w
 See our demo video! 
 https://youtu.be/iKAdm-ZGjIc
 
-The calendar is enabled by FullCalendar Library. 
+- Authorization: by registering your username and password, you can get your own calendar. 
+
+- Calendar: you can make reservations by dropping blocks (equipt. i & your username) onto your calendar. after creating event, you can change its duration or timing by drag & drop. by clicking on the delete button, you can delete the event. 
+
+This application is using technologies such as Flask (python), JQuery. 
+
+The calendar view is enabled by FullCalendar Library, a full-sized drag & drop JavaScript event calendar. 
+https://fullcalendar.io/
 
 
 ## Setting up this application in your environment
 
 ### activate venv environment
+using a virtual python environment will make your life easier:)
 ```
+python3 -m venv venv
 . venv/bin/activate
 ```
 
