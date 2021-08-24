@@ -39,10 +39,11 @@ def show_cal():
     events_list = []
     for row in events_rows: 
         d = collections.OrderedDict()
+        d["id"] = row["id"]
         d["start"] = row["start"]
         d["end"] = row["end"]
         d["title"] = row["title"]
-        # d["user_id"] = int(row["user_id"])
+        d["classNames"] = "id-" + str(row["id"])
         events_list.append(d)
     # current_app.logger.debug(events_list)
     return render_template("calendar/cal.html", events = events_list)
@@ -56,5 +57,16 @@ def update_event():
     db.execute("UPDATE event SET (start, end, title) = (?, ?, ?) WHERE user_id = ? AND start like ? AND title = ?", 
                (r["event[start]"], r["event[end]"], r["event[title]"], session["user_id"], 
                 r["event_old[start]"], r["event_old[title]"]))
+    db.commit()
+    return redirect(url_for("calendar.show_cal"))
+
+# delete event
+@bp.route("/delete", methods=("GET", "POST")) # methods=を消すとなぜかバグる(403)
+def delete_event(): 
+    r = request.form
+    # delete event from db
+    db = get_db()
+    db.execute("DELETE FROM event WHERE id = ? AND user_id = ?", 
+               (request.form["id"], session["user_id"]))
     db.commit()
     return redirect(url_for("calendar.show_cal"))

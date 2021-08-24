@@ -17,6 +17,7 @@
 
     var calendarEl = document.getElementById('calendar');
     var containerEl = document.getElementById('external-events');
+
     var calendar = new Calendar(calendarEl, { // make global
       initialView: 'timeGridFourDay', 
       headerToolbar: {
@@ -34,8 +35,19 @@
       droppable: true
     });
 
+    function makeDelete(){
+      var frame = $('.fc-event-main-frame')
+      if (frame != null) {
+        $(".fc-event-main-frame").append(
+          '<button id="delete-button" class="btn btn-primary btn-sm" type="button">delete</button>'
+        )
+      }; 
+    };
+
     // render calendar 
     calendar.render();
+
+    makeDelete();
 
     // create draggable
     new Draggable(containerEl, {
@@ -67,6 +79,8 @@
       .done(function(data){
         // calendar.addEvent(data); 
         console.log(data);
+        makeDelete(); 
+        
       });
     });
 
@@ -92,10 +106,26 @@
       console.log(changeInfo.event.start); 
     });
 
-    // delete event when dropped outside current calendar 
-    calendar.on('eventLeave', function(info){
-      info.event.remove(); 
+    // delete event 
+    $(document).on("click", "#delete-button", function(){
+      console.log("say something!")
+      var classes = $(this).parents('.fc-timegrid-event').attr('class')
+      var id = classes.split("id-").slice(-1)[0]; 
+      console.log(id); 
+      var event = calendar.getEventById(id); 
+      console.log(event); 
+
+      event.remove();
+      
+      $.ajax({
+        data : {
+          id: id
+        },
+        type : 'POST',
+        url : '/cal/delete'
+      }); 
     });
+    
 
   });
 
@@ -115,19 +145,19 @@
         <strong>Draggable Events</strong>
       </p>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main">Equiptment 1</div>
+        <div class="fc-event-main draggable">Equiptment 1: {{g.user['username']}}</div>
       </div>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main">Equiptment 2</div>
+        <div class="fc-event-main draggable">Equiptment 2: {{g.user['username']}}</div>
       </div>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main">Equiptment 3</div>
+        <div class="fc-event-main draggable">Equiptment 3: {{g.user['username']}}</div>
       </div>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main">Equiptment 4</div>
+        <div class="fc-event-main draggable">Equiptment 4: {{g.user['username']}}</div>
       </div>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main">Equiptment 5</div>
+        <div class="fc-event-main draggable">Equiptment 5: {{g.user['username']}}</div>
       </div>
     </div>
 
