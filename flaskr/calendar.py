@@ -25,7 +25,7 @@ def show_cal():
 
         # store event to database
         db.execute("INSERT INTO event (user_id, start, end, title) VALUES (?, ?, ?, ?)", 
-                   (1, date_start, date_end, event_title))
+                   (session['user_id'], date_start, date_end, event_title))
         db.commit()
 
         # ajax

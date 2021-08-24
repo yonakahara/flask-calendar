@@ -137,35 +137,38 @@
 
 {% block content %}
 
+  <div class="py-5 text-center">
     <h3>This is Calendar Page</h3>
+  </div>
 
+  <div class="row">
     <!-- draggable elements -->
-    <div id="external-events">
+    <div id="external-events" class="col-md-2 order-md-2 mb-4">
       <p>
         <strong>Draggable Events</strong>
       </p>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main draggable">Equiptment 1: {{g.user['username']}}</div>
+        <div class="fc-event-main draggable">Equipt. 1: {{g.user['username']}}</div>
       </div>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main draggable">Equiptment 2: {{g.user['username']}}</div>
+        <div class="fc-event-main draggable">Equipt. 2: {{g.user['username']}}</div>
       </div>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main draggable">Equiptment 3: {{g.user['username']}}</div>
+        <div class="fc-event-main draggable">Equipt. 3: {{g.user['username']}}</div>
       </div>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main draggable">Equiptment 4: {{g.user['username']}}</div>
+        <div class="fc-event-main draggable">Equipt. 4: {{g.user['username']}}</div>
       </div>
       <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event">
-        <div class="fc-event-main draggable">Equiptment 5: {{g.user['username']}}</div>
+        <div class="fc-event-main draggable">Equipt. 5: {{g.user['username']}}</div>
       </div>
     </div>
 
     <!-- render calendar -->
-    <div id="calendar-container">
+    <div id="calendar-container" class="col-md-8 order-md-1">
       <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard"></div>
     </div>
 
-
+  </div>
 
 {% endblock %}
